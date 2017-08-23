@@ -1,6 +1,6 @@
 component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
-	Variables.apiTestURL = "https://test.authorize.net/gateway/transact.dll";
-	Variables.apiLiveURL = "https://secure2.authorize.net/gateway/transact.dll";
+	Variables.apiTestURL = "https://apitest.authorize.net/xml/v1/request.api";
+	Variables.apiLiveURL = "https://apitest.authorize.net/xml/v1/request.api";
 	Variables.apiVersion = 3.1;
 	Variables.transactionKey = '6d85aNJW392zSeDE';
 	Variables.loginId = '4fT62PFdna';
