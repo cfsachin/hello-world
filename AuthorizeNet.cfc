@@ -139,7 +139,8 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 		writedump('#serializeJSON(requestJSON)#');
 
 		cfhttp(method="GET", charset="utf-8", url="#apiTestURL#", result="result") {
-		    cfhttpparam(type="header",name="Content-Type", value="application/json");
+		    cfhttpparam(type="header",name="Content-Type", value="application/json,text/javascript,*/*");
+		    cfhttpparam(type="header",name="Accept-Language", value="en-US,en;q=0.8,id;q=0.6");
 		    cfhttpparam(type="body", value="#serializeJSON(requestJSON)#");
 		}
 
