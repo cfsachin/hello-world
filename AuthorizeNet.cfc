@@ -1,18 +1,23 @@
-		var requestJSON 	= 	structNew();
-		var merchantStruct 	= 	structNew();
-		var transactStruct 	= 	structNew();
-		var paymentStruct 	= 	structNew();
-		var lineItemStruct 	= 	structNew();
-		var dutyStruct 		= 	structNew();
-		var shippingStruct 	= 	structNew();
-		var taxStruct 		= 	structNew();
-		var billTo			=	structNew();
-		var shipTo			=	structNew();
+        var LinkedHashMap = createObject("java", "java.util.LinkedHashMap");
+        var requestJSON         =   LinkedHashMap.init();
+		var merchantStruct 	= 	LinkedHashMap.init();
+		var transactStruct 	= 	LinkedHashMap.init();
+		var paymentStruct 	= 	LinkedHashMap.init();
+		var lineItemStruct 	= 	LinkedHashMap.init();
+		var dutyStruct 		= 	LinkedHashMap.init();
+		var shippingStruct 	= 	LinkedHashMap.init();
+		var taxStruct 		= 	LinkedHashMap.init();
+		var billTo			=	LinkedHashMap.init();
+		var billToStruct    =   LinkedHashMap.init();
+		var shipTo			=	LinkedHashMap.init();
+		var shipToStruct	=	LinkedHashMap.init();
 		var items			=	ArrayNew(1);
 		var metadata        =   structNew();
 
-		requestJSON['createTransactionRequest'] = structNew();
+		requestJSON['createTransactionRequest'] = LinkedHashMap.init();
 
+        //writedump('#requestJSON#');
+        
 		//Add Merchant Details
 		merchantStruct['name'] = variables.loginId;
 		merchantStruct['transactionKey'] = variables.transactionKey;
@@ -31,7 +36,7 @@
        refMetadata['refId'] = structNew();
        refMetadata['refId']['type']    =   'string';
 
-       requestJSON.createTransactionRequest.setMetadata(refMetadata);
+       //requestJSON['createTransactionRequest'].setMetadata(refMetadata);
 
 
 		//TransactionRequest
@@ -44,12 +49,13 @@
        amtMetaData['amount'] = structNew();
        amtMetaData['amount']['type']    =   'string';	
        
-       requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(amtMetaData); 
+       //requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(amtMetaData); 
 
 
 		//Payment Info
 		requestJSON['createTransactionRequest']['transactionRequest']['payment'] = structNew();		
-		paymentStruct['creditCard']	= structNew();
+		//paymentStruct['creditCard']	= structNew();
+		paymentStruct['creditCard']	= LinkedHashMap.init();
 		paymentStruct['creditCard']['cardNumber']		=	arguments.payload.cardNumber;
 		paymentStruct['creditCard']['expirationDate']	=	arguments.payload.expirationDate;
 		paymentStruct['creditCard']['cardCode']			=	arguments.payload.cardCode;
@@ -65,7 +71,7 @@
 
 		requestJSON['createTransactionRequest']['transactionRequest']['payment']	=	paymentStruct;
 		
-		requestJSON['createTransactionRequest']['transactionRequest']['payment']['creditCard'].setMetaData(payMetaData);		
+		//requestJSON['createTransactionRequest']['transactionRequest']['payment']['creditCard'].setMetaData(payMetaData);		
 
 
 		//Lineitems as Array of struct
@@ -89,7 +95,7 @@
 			   
 			   requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem']	=	lineItemStruct;
 			   
-                requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem'].setMetaData(lineItemMetaData);			   
+                //requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem'].setMetaData(lineItemMetaData);			   
 			}
 		}
 
@@ -104,7 +110,7 @@
 				taxMetaData['amount']['type']   =   'string';
 				
 			requestJSON['createTransactionRequest']['transactionRequest']['tax']	=	taxStruct;
-			requestJSON['createTransactionRequest']['transactionRequest']['tax'].setMetaData(taxMetaData);
+			//requestJSON['createTransactionRequest']['transactionRequest']['tax'].setMetaData(taxMetaData);
 		}
 
 		//Duty Information
@@ -118,7 +124,7 @@
 				dutyMetaData['amount']['type']   =   'string';				
 				requestJSON['createTransactionRequest']['transactionRequest']['duty']	=	dutyStruct;
 				
-				requestJSON['createTransactionRequest']['transactionRequest']['duty'].setMetaData(dutyMetaData);
+				//requestJSON['createTransactionRequest']['transactionRequest']['duty'].setMetaData(dutyMetaData);
 		}
 
 		//Shipping Information
@@ -132,7 +138,7 @@
 				shipMetaData['amount']['type']   =   'string';				
 				requestJSON['createTransactionRequest']['transactionRequest']['shipping']	=	shippingStruct;
 				
-                requestJSON['createTransactionRequest']['transactionRequest']['shipping'].setMetaData(shipMetaData);			
+                //requestJSON['createTransactionRequest']['transactionRequest']['shipping'].setMetaData(shipMetaData);			
 		}
 
 		//PO Number
@@ -142,7 +148,7 @@
 			    poMetaData['poNumber']  =   structNew();
 			    poMetaData['poNumber']['type']  =   'string';
 			  requestJSON['createTransactionRequest']['transactionRequest']['poNumber']	=	arguments.payLoad.poNumber;
-			  requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(poMetaData);			  
+			  //requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(poMetaData);			  
 		}
 
 		//Customer ID Number
@@ -153,7 +159,7 @@
 			        idMetaData['id']['type']    =   'string';
 			    requestJSON['createTransactionRequest']['transactionRequest']['customer']['id']	=	arguments.payLoad.customer.id;
 			    
-			    requestJSON['createTransactionRequest']['transactionRequest']['customer'].setMetaData(idMetaData);
+			    //requestJSON['createTransactionRequest']['transactionRequest']['customer'].setMetaData(idMetaData);
 			    
 		}
 
@@ -173,7 +179,7 @@
 			    billStruct['zip']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['billTo']	=	billToStruct;
 				
-				requestJSON['createTransactionRequest']['transactionRequest']['billTo'].setMetaData(billStruct);
+				//requestJSON['createTransactionRequest']['transactionRequest']['billTo'].setMetaData(billStruct);
 		}
 
 		//shipTo Information
@@ -192,7 +198,7 @@
 			    shipStruct['zip']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['shipTo']	=	shipToStruct;
 				
-				requestJSON['createTransactionRequest']['transactionRequest']['shipTo'].setMetaData(shipStruct);
+				//requestJSON['createTransactionRequest']['transactionRequest']['shipTo'].setMetaData(shipStruct);
 		}
 
 		//Customer IP
@@ -202,12 +208,12 @@
 			    custIPStruct['customerIP']   =   structNew();
 			    custIPStruct['customerIP']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['customerIP']	=	arguments.payLoad.customerIP;
-                requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(custIPStruct);				
+                //requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(custIPStruct);				
 		}
 
 		//TransactionRequest Type
-		transactSettingStruct 	=	structNew();
-		transactSettingStruct['setting']	=	structNew();
+		transactSettingStruct 	=	LinkedHashMap.init();
+		transactSettingStruct['setting']	=	LinkedHashMap.init();
 		transactSettingStruct['setting']['settingName']	=	'testRequest';
 		transactSettingStruct['setting']['settingValue']	=	'false';
 		
@@ -217,7 +223,7 @@
 
 		requestJSON['createTransactionRequest']['transactionRequest']['transactionSettings']	=	transactSettingStruct;
 		
-		requestJSON['createTransactionRequest']['transactionRequest']['transactionSettings']['setting'].setMetaData(transactStruct);		
+		//requestJSON['createTransactionRequest']['transactionRequest']['transactionSettings']['setting'].setMetaData(transactStruct);		
 		
 		writedump('#serializeJSON(requestJSON)#');
 
@@ -229,5 +235,3 @@
 
 		writedump('#result#');
 	}
-
-}
