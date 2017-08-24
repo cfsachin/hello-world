@@ -11,7 +11,7 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 	public string function SendOrderToAuthorizeNet(required struct payload)
 	returnformat="JSON" {
 
-		var requestJSON 	= 	structNew();
+	var requestJSON 	= 	structNew();
 		var merchantStruct 	= 	structNew();
 		var transactStruct 	= 	structNew();
 		var paymentStruct 	= 	structNew();
@@ -22,6 +22,7 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 		var billTo			=	structNew();
 		var shipTo			=	structNew();
 		var items			=	ArrayNew(1);
+		var metadata        =   structNew();
 
 		requestJSON['createTransactionRequest'] = structNew();
 
@@ -31,23 +32,54 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 		requestJSON['createTransactionRequest']['merchantAuthentication'] = merchantStruct;
 
 		//Add Ref ID
-		if(structKeyExists(arguments.payload,'refID'))
+		if(structKeyExists(arguments.payload,'refID')){
 			requestJSON['createTransactionRequest']['refId'] =	arguments.payload.refid;
-		else
+		}
+		else{
 			requestJSON['createTransactionRequest']['refId'] =	'11111';
+		}
+
+       //structClear(metadata);
+       refMetadata  =   structNew();
+       refMetadata['refId'] = structNew();
+       refMetadata['refId']['type']    =   'string';
+
+       requestJSON.createTransactionRequest.setMetadata(refMetadata);
+
 
 		//TransactionRequest
 		transactStruct['transactionType'] = 'authCaptureTransaction';
 		transactStruct['amount'] = arguments.payload.amount;
+		requestJSON['createTransactionRequest']['transactionRequest']				=	transactStruct;
+       
+       //structClear(metadata);	
+       amtMetaData  =   structNew();
+       amtMetaData['amount'] = structNew();
+       amtMetaData['amount']['type']    =   'string';	
+       
+       requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(amtMetaData); 
+
 
 		//Payment Info
+		requestJSON['createTransactionRequest']['transactionRequest']['payment'] = structNew();		
 		paymentStruct['creditCard']	= structNew();
 		paymentStruct['creditCard']['cardNumber']		=	arguments.payload.cardNumber;
 		paymentStruct['creditCard']['expirationDate']	=	arguments.payload.expirationDate;
 		paymentStruct['creditCard']['cardCode']			=	arguments.payload.cardCode;
+	   //structClear(metadata);
+	   payMetaData  =   structNew();
+       payMetaData['cardNumber'] = structNew();
+       payMetaData['cardNumber']['type']    =   'string';
+       payMetaData['expirationDate'] = structNew();
+       payMetaData['expirationDate']['type']    =   'string';
+       payMetaData['cardCode'] = structNew();
+       payMetaData['cardCode']['type']    =   'string';       
 
-		requestJSON['createTransactionRequest']['transactionRequest']				=	transactStruct;
+
 		requestJSON['createTransactionRequest']['transactionRequest']['payment']	=	paymentStruct;
+		
+		requestJSON['createTransactionRequest']['transactionRequest']['payment']['creditCard'].setMetaData(payMetaData);		
+
 
 		//Lineitems as Array of struct
 		if(structKeyExists(arguments.payLoad,'lineItems') AND structKeyExists(arguments.payLoad.lineItems,'lineItem')){
@@ -145,12 +177,6 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 		}
 
 		writedump('#result#');
-	}
-
-	private void function setMetadata(required struct payload, options default="#structNew()#"){
-		for (key in arguments.payload) {
-			structInsert(payLoadStruct, "#key#", "#arguments.payload['#key#']#", "yes");
-		}
 	}
 
 }
