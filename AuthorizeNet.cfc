@@ -1,17 +1,4 @@
-component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
-	Variables.apiTestURL = "https://apitest.authorize.net/xml/v1/request.api";
-	Variables.apiLiveURL = "https://apitest.authorize.net/xml/v1/request.api";
-	Variables.apiVersion = 3.1;
-	Variables.transactionKey = '6d85aNJW392zSeDE';
-	Variables.loginId = '4fT62PFdna';
-
-	Variables.responseDelimeter = "|";
-	Variables.payLoadStruct = structNew();
-
-	public string function SendOrderToAuthorizeNet(required struct payload)
-	returnformat="JSON" {
-
-	var requestJSON 	= 	structNew();
+		var requestJSON 	= 	structNew();
 		var merchantStruct 	= 	structNew();
 		var transactStruct 	= 	structNew();
 		var paymentStruct 	= 	structNew();
@@ -90,7 +77,19 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				lineItemStruct['description']	=	recs.description;
 				lineItemStruct['quantity']		=	recs.quantity;
 				lineItemStruct['unitPrice']		=	recs.unitPrice;
-				requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem']	=	lineItemStruct;
+			
+			  
+			   lineItemMetaData =   structNew();
+			   lineItemMetaData['itemId']   =   structNew();
+			   lineItemMetaData['itemId']['type'] = 'string';
+			   lineItemMetaData['quantity']   =   structNew();
+			   lineItemMetaData['quantity']['type'] = 'string';
+			   lineItemMetaData['unitPrice']   =   structNew();
+			   lineItemMetaData['unitPrice']['type'] = 'string';			   
+			   
+			   requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem']	=	lineItemStruct;
+			   
+                requestJSON['createTransactionRequest']['transactionRequest']['lineItems']['lineItem'].setMetaData(lineItemMetaData);			   
 			}
 		}
 
@@ -99,7 +98,13 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				taxStruct['amount']			=	arguments.payLoad.tax.amount;
 				taxStruct['name']			=	arguments.payLoad.tax.name;
 				taxStruct['description']	=	arguments.payLoad.tax.description;
-				requestJSON['createTransactionRequest']['transactionRequest']['tax']	=	taxStruct;
+				
+				taxMetaData =   structNew();
+				taxMetaData['amount']   =   structNew();
+				taxMetaData['amount']['type']   =   'string';
+				
+			requestJSON['createTransactionRequest']['transactionRequest']['tax']	=	taxStruct;
+			requestJSON['createTransactionRequest']['transactionRequest']['tax'].setMetaData(taxMetaData);
 		}
 
 		//Duty Information
@@ -107,7 +112,13 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				dutyStruct['amount']		=	arguments.payLoad.duty.amount;
 				dutyStruct['name']			=	arguments.payLoad.duty.name;
 				dutyStruct['description']	=	arguments.payLoad.duty.description;
+				
+				dutyMetaData =   structNew();
+				dutyMetaData['amount']   =   structNew();
+				dutyMetaData['amount']['type']   =   'string';				
 				requestJSON['createTransactionRequest']['transactionRequest']['duty']	=	dutyStruct;
+				
+				requestJSON['createTransactionRequest']['transactionRequest']['duty'].setMetaData(dutyMetaData);
 		}
 
 		//Shipping Information
@@ -115,17 +126,35 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				shippingStruct['amount']		=	arguments.payLoad.shipping.amount;
 				shippingStruct['name']			=	arguments.payLoad.shipping.name;
 				shippingStruct['description']	=	arguments.payLoad.shipping.description;
+				
+				shipMetaData =   structNew();
+				shipMetaData['amount']   =   structNew();
+				shipMetaData['amount']['type']   =   'string';				
 				requestJSON['createTransactionRequest']['transactionRequest']['shipping']	=	shippingStruct;
+				
+                requestJSON['createTransactionRequest']['transactionRequest']['shipping'].setMetaData(shipMetaData);			
 		}
 
 		//PO Number
 		if(structKeyExists(arguments.payLoad,'poNumber')){
-				requestJSON['createTransactionRequest']['transactionRequest']['poNumber']	=	arguments.payLoad.poNumber;
+			
+			    poMetaData  =   structNew();
+			    poMetaData['poNumber']  =   structNew();
+			    poMetaData['poNumber']['type']  =   'string';
+			  requestJSON['createTransactionRequest']['transactionRequest']['poNumber']	=	arguments.payLoad.poNumber;
+			  requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(poMetaData);			  
 		}
 
 		//Customer ID Number
 		if(structKeyExists(arguments.payLoad,'customer')){
-				requestJSON['createTransactionRequest']['transactionRequest']['customer']['id']	=	arguments.payLoad.customer.id;
+			
+			        idMetaData  =   structNew();
+			        idMetaData['id']    =   structNew();
+			        idMetaData['id']['type']    =   'string';
+			    requestJSON['createTransactionRequest']['transactionRequest']['customer']['id']	=	arguments.payLoad.customer.id;
+			    
+			    requestJSON['createTransactionRequest']['transactionRequest']['customer'].setMetaData(idMetaData);
+			    
 		}
 
 		//billTo Information
@@ -139,7 +168,12 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				billToStruct['zip']				=	arguments.payLoad.billTo.zip;
 				billToStruct['country']			=	arguments.payLoad.billTo.country;
 
+			    billStruct  =   structNew();
+			    billStruct['zip']   =   structNew();
+			    billStruct['zip']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['billTo']	=	billToStruct;
+				
+				requestJSON['createTransactionRequest']['transactionRequest']['billTo'].setMetaData(billStruct);
 		}
 
 		//shipTo Information
@@ -153,12 +187,22 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 				shipToStruct['zip']				=	arguments.payLoad.shipTo.zip;
 				shipToStruct['country']			=	arguments.payLoad.shipTo.country;
 
+				shipStruct  =   structNew();
+			    shipStruct['zip']   =   structNew();
+			    shipStruct['zip']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['shipTo']	=	shipToStruct;
+				
+				requestJSON['createTransactionRequest']['transactionRequest']['shipTo'].setMetaData(shipStruct);
 		}
 
 		//Customer IP
 		if(structKeyExists(arguments.payLoad,'customerIP')){
+		
+				custIPStruct  =   structNew();
+			    custIPStruct['customerIP']   =   structNew();
+			    custIPStruct['customerIP']['type']   =   'string';
 				requestJSON['createTransactionRequest']['transactionRequest']['customerIP']	=	arguments.payLoad.customerIP;
+                requestJSON['createTransactionRequest']['transactionRequest'].setMetaData(custIPStruct);				
 		}
 
 		//TransactionRequest Type
@@ -166,8 +210,15 @@ component displayname="AuthorizeNet" hint="Talk to Authorize.net API"{
 		transactSettingStruct['setting']	=	structNew();
 		transactSettingStruct['setting']['settingName']	=	'testRequest';
 		transactSettingStruct['setting']['settingValue']	=	'false';
+		
+		transactStruct  =   structNew();
+		transactStruct['settingValue']  =   structNew();
+		transactStruct['settingValue']['type']  =   'string';
 
 		requestJSON['createTransactionRequest']['transactionRequest']['transactionSettings']	=	transactSettingStruct;
+		
+		requestJSON['createTransactionRequest']['transactionRequest']['transactionSettings']['setting'].setMetaData(transactStruct);		
+		
 		writedump('#serializeJSON(requestJSON)#');
 
 		cfhttp(method="GET", charset="utf-8", url="#apiTestURL#", result="result") {
