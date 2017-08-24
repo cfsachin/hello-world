@@ -1,5 +1,5 @@
 <cfscript>
-	Variables.authObj = CreateObject('Component','AuthorizeNet');
+	Variables.authObj = CreateObject('Component','authorizeNetServicesBeta');
 	Variables.frmData = structNew();
 
 	frmData.refID = 'A111111';
@@ -59,7 +59,8 @@
 	frmData.customerIP			=	CGI.REMOTE_ADDR;
 
 	try{
-		authObj.SendOrderToAuthorizeNet(frmData);
+		Variables.resp = authObj.AuthCaptureTransaction(frmData);
+		writedump("#deSerializeJSON(resp)#");
 	}
 	catch(any e){
 		writedump("#e#");
