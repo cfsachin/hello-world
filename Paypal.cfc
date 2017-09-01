@@ -1,3 +1,5 @@
+component  displayname="Paypal" hint="Paypal"
+{
 	Variables.username = "";
 	Variables.password = "";
 	Variables.server = "";
@@ -55,3 +57,4 @@
 
 		return returnStruct;		
 	}
+}
